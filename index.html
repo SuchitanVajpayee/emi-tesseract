@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EMI Tesseract - Advanced Loan & Prepayment Calculator | EMI Calculator India</title>
+    <meta name="description" content="Free EMI Calculator with advanced prepayment tracking. Calculate loan EMI, plan prepayments, save interest, and reduce loan tenure. Best loan calculator for home loans, personal loans, and car loans in India.">
+    <meta name="keywords" content="EMI calculator, loan calculator, prepayment calculator, home loan EMI, personal loan calculator, car loan calculator, India EMI calculator, interest calculator, loan repayment calculator">
+    <meta name="author" content="EMI Tesseract">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="EMI Tesseract - Advanced Loan Calculator">
+    <meta property="og:description" content="Calculate loan EMI with prepayment tracking. Save thousands on interest!">
+    <meta name="theme-color" content="#667eea">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .logo {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(145deg, #1a1a2e, #0f3460);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 
+                0 8px 20px rgba(0, 0, 0, 0.4),
+                inset 0 -5px 15px rgba(0, 0, 0, 0.3),
+                inset 0 5px 15px rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+            padding: 15px;
+            transform-style: preserve-3d;
+            perspective: 1000px;
+        }
+
+        .logo::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            animation: shine 3s infinite;
+        }
+
+        @keyframes shine {
+            0%, 100% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            50% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+
+        .logo svg {
+            width: 100%;
+            height: 100%;
+            filter: drop-shadow(0 2px 4px rgba(102, 126, 234, 0.5));
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotateY(0deg); }
+            50% { transform: translateY(-5px) rotateY(5deg); }
+        }
+
+        .header-content {
+            flex: 1;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 1.1em;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .card h2 {
+            font-size: 1.5em;
+            color: #333;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            color: #555;
+            margin-bottom: 8px;
+            font-size: 0.95em;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        .input-group input {
+            flex: 1;
+        }
+
+        .input-group select {
+            width: auto;
+            min-width: 120px;
+        }
+
+        .helper-text {
+            font-size: 0.85em;
+            color: #888;
+            margin-top: 5px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 100%;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-success {
+            background: #48bb78;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #38a169;
+        }
+
+        .btn-danger {
+            background: #f56565;
+            color: white;
+            padding: 8px 12px;
+            font-size: 0.9em;
+        }
+
+        .btn-info {
+            background: #4299e1;
+            color: white;
+            margin-top: 10px;
+        }
+
+        .btn-info:hover {
+            background: #3182ce;
+        }
+
+        .prepayment-list {
+            border-top: 1px solid #e0e0e0;
+            padding-top: 15px;
+            margin-top: 15px;
+        }
+
+        .prepayment-list h4 {
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .prepayment-items {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .prepayment-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #f7fafc;
+            padding: 10px 12px;
+            border-radius: 8px;
+            border: 2px solid #e0e0e0;
+        }
+
+        .prepayment-info {
+            font-size: 0.9em;
+            color: #555;
+        }
+
+        .summary-card {
+            background: white;
+            color: #333;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border: 2px solid #e0e0e0;
+        }
+
+        .summary-card h3 {
+            margin-bottom: 20px;
+            font-size: 1.3em;
+            color: #667eea;
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .summary-item:last-child {
+            border-bottom: none;
+        }
+
+        .summary-label {
+            color: #666;
+        }
+
+        .summary-value {
+            font-weight: 600;
+            font-size: 1.1em;
+            color: #333;
+        }
+
+        .highlight-green {
+            color: #48bb78;
+            background: #f0fff4;
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+
+        .highlight-blue {
+            color: #4299e1;
+            background: #ebf8ff;
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+
+        .tabs {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        .tab-buttons {
+            display: flex;
+            border-bottom: 2px solid #e0e0e0;
+            overflow-x: auto;
+        }
+
+        .tab-button {
+            flex: 1;
+            padding: 15px 20px;
+            border: none;
+            background: white;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            color: #666;
+            transition: all 0.3s;
+            white-space: nowrap;
+        }
+
+        .tab-button.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .tab-button:hover:not(.active) {
+            background: #f7fafc;
+        }
+
+        .tab-content {
+            padding: 30px;
+        }
+
+        .tab-pane {
+            display: none;
+        }
+
+        .tab-pane.active {
+            display: block;
+        }
+
+        .chart-container {
+            margin: 30px 0;
+            height: 400px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        table th,
+        table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        table th {
+            background: #f7fafc;
+            font-weight: 600;
+            color: #333;
+        }
+
+        table tr:hover {
+            background: #f7fafc;
+        }
+
+        table tr.paid-row {
+            background: #f0fff4;
+        }
+
+        table tr.paid-row td {
+            color: #38a169;
+        }
+
+        .text-right {
+            text-align: right;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .text-red {
+            color: #f56565;
+        }
+
+        .text-green {
+            color: #48bb78;
+        }
+
+        .text-blue {
+            color: #667eea;
+        }
+
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .stat-label {
+            font-size: 0.9em;
+            opacity: 0.9;
+            margin-bottom: 8px;
+        }
+
+        .stat-value {
+            font-size: 1.8em;
+            font-weight: 700;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            margin-top: 20px;
+            padding: 20px;
+        }
+
+        .pagination button {
+            padding: 10px 20px;
+            border: 2px solid #667eea;
+            background: white;
+            color: #667eea;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .pagination button:hover:not(:disabled) {
+            background: #667eea;
+            color: white;
+        }
+
+        .pagination button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .pagination span {
+            color: #666;
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+
+            .header {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .tab-buttons {
+                flex-wrap: wrap;
+            }
+
+            .tab-button {
+                flex: 0 0 50%;
+            }
+
+            .logo {
+                width: 60px;
+                height: 60px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="logo">
+                <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Modern 3D Money/Calculator Icon -->
+                    <!-- Base platform -->
+                    <ellipse cx="50" cy="85" rx="35" ry="8" fill="rgba(102, 126, 234, 0.2)"/>
+                    
+                    <!-- Main calculator body (3D effect) -->
+                    <defs>
+                        <linearGradient id="calcGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#764ba2;stop-opacity:1" />
+                        </linearGradient>
+                        <linearGradient id="screenGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" style="stop-color:#4ade80;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#22c55e;stop-opacity:1" />
+                        </linearGradient>
+                    </defs>
+                    
+                    <!-- Calculator back face -->
+                    <rect x="28" y="22" width="44" height="56" rx="4" fill="#0f3460" opacity="0.3"/>
+                    
+                    <!-- Calculator main face -->
+                    <rect x="25" y="18" width="44" height="56" rx="4" fill="url(#calcGrad)" stroke="#fff" stroke-width="1"/>
+                    
+                    <!-- Screen -->
+                    <rect x="30" y="24" width="34" height="14" rx="2" fill="url(#screenGrad)"/>
+                    
+                    <!-- Display numbers -->
+                    <text x="48" y="35" font-family="Arial, sans-serif" font-size="8" fill="#fff" font-weight="bold" text-anchor="middle">₹EMI</text>
+                    
+                    <!-- Button rows -->
+                    <!-- Row 1 -->
+                    <circle cx="34" cy="46" r="3" fill="#fff" opacity="0.9"/>
+                    <circle cx="43" cy="46" r="3" fill="#fff" opacity="0.9"/>
+                    <circle cx="52" cy="46" r="3" fill="#fff" opacity="0.9"/>
+                    <circle cx="61" cy="46" r="3" fill="#fff" opacity="0.9"/>
+                    
+                    <!-- Row 2 -->
+                    <circle cx="34" cy="54" r="3" fill="#fff" opacity="0.9"/>
+                    <circle cx="43" cy="54" r="3" fill="#fff" opacity="0.9"/>
+                    <circle cx="52" cy="54" r="3" fill="#fff" opacity="0.9"/>
+                    <circle cx="61" cy="54" r="3" fill="#fff" opacity="0.9"/>
+                    
+                    <!-- Row 3 -->
+                    <circle cx="34" cy="62" r="3" fill="#fff" opacity="0.9"/>
+                    <circle cx="43" cy="62" r="3" fill="#fff" opacity="0.9"/>
+                    <circle cx="52" cy="62" r="3" fill="#fff" opacity="0.9"/>
+                    <circle cx="61" cy="62" r="3" fill="#fff" opacity="0.9"/>
+                    
+                    <!-- Bottom equal button -->
+                    <rect x="30" y="67" width="34" height="5" rx="2" fill="#4ade80"/>
+                    
+                    <!-- 3D depth lines -->
+                    <line x1="25" y1="18" x2="28" y2="22" stroke="#0f3460" stroke-width="1" opacity="0.5"/>
+                    <line x1="69" y1="18" x2="72" y2="22" stroke="#0f3460" stroke-width="1" opacity="0.5"/>
+                    <line x1="69" y1="74" x2="72" y2="78" stroke="#0f3460" stroke-width="1" opacity="0.5"/>
+                    <line x1="25" y1="74" x2="28" y2="78" stroke="#0f3460" stroke-width="1" opacity="0.5"/>
+                    
+                    <!-- Coin accent -->
+                    <circle cx="75" cy="30" r="8" fill="#fbbf24" stroke="#f59e0b" stroke-width="1.5"/>
+                    <text x="75" y="34" font-family="Arial, sans-serif" font-size="10" fill="#fff" font-weight="bold" text-anchor="middle">₹</text>
+                </svg>
+            </div>
+            <div class="header-content">
+                <h1>EMI Tesseract</h1>
+                <p>Advanced Loan & Prepayment Calculator</p>
+            </div>
+        </div>
+
+        <!-- Input Section -->
+        <div class="grid-2">
+            <!-- Loan Details -->
+            <div class="card">
+                <h2>💰 Loan Details</h2>
+                <div class="form-group">
+                    <label>Loan Amount (₹)</label>
+                    <input type="number" id="loanAmount" value="1000000" min="1000" max="100000000" step="1000">
+                    <div class="helper-text" id="loanAmountText">₹10,00,000</div>
+                </div>
+                <div class="form-group">
+                    <label>Annual Interest Rate (%)</label>
+                    <input type="number" step="0.1" id="annualRate" value="8.5">
+                </div>
+                <div class="form-group">
+                    <label>Loan Tenure</label>
+                    <div class="input-group">
+                        <input type="number" id="tenureValue" value="20">
+                        <select id="tenureUnit">
+                            <option value="months">Months</option>
+                            <option value="quarters">Quarters</option>
+                            <option value="years" selected>Years</option>
+                        </select>
+                    </div>
+                    <div class="helper-text" id="tenureText">240 months total</div>
+                </div>
+                
+                <!-- Mark Paid EMIs Section -->
+                <div class="form-group" style="margin-top: 25px; padding-top: 25px; border-top: 2px solid #e0e0e0;">
+                    <label>Track Paid EMIs</label>
+                    <div class="input-group">
+                        <input type="number" id="paidMonths" placeholder="Months paid" min="0" value="0">
+                        <button class="btn btn-info" onclick="markPaidEMIs()" style="width: auto; white-space: nowrap;">Mark as Paid</button>
+                    </div>
+                    <div class="helper-text">Enter how many months you've already paid</div>
+                </div>
+            </div>
+
+            <!-- Prepayment Section -->
+            <div class="card">
+                <h2>📉 Prepayments</h2>
+
+                <div class="form-group">
+                    <label>Prepayment Amount (₹)</label>
+                    <input type="number" id="prepayAmount" placeholder="Enter amount" min="0" step="1000">
+                </div>
+
+                <div class="form-group">
+                    <label>Start From (Month)</label>
+                    <input type="number" id="recurringStart" placeholder="e.g., 7" value="1">
+                </div>
+                <div class="form-group">
+                    <label>Every How Many Months?</label>
+                    <input type="number" id="recurringInterval" placeholder="e.g., 12" value="12">
+                    <div class="helper-text">E.g., 12 = yearly, 6 = half-yearly, 3 = quarterly</div>
+                </div>
+                <div class="form-group">
+                    <label>Number of Prepayments (Optional)</label>
+                    <input type="number" id="recurringCount" placeholder="Leave blank for all remaining">
+                    <div class="helper-text">Leave blank to continue until loan is paid off</div>
+                </div>
+
+                <button class="btn btn-success" onclick="addPrepayment()">➕ Add Prepayment</button>
+                
+                <div id="prepaymentList"></div>
+            </div>
+        </div>
+
+        <!-- Summary Cards -->
+        <div class="grid-2">
+            <div class="summary-card">
+                <h3>Without Prepayment</h3>
+                <div id="baseSummary" class="loading">Calculating...</div>
+            </div>
+            <div class="summary-card">
+                <h3>With Prepayment</h3>
+                <div id="prepaymentSummary" class="loading">Calculating...</div>
+            </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs">
+            <div class="tab-buttons">
+                <button class="tab-button active" onclick="switchTab('overview')">Overview</button>
+                <button class="tab-button" onclick="switchTab('emibreakdown')">EMI Breakdown</button>
+                <button class="tab-button" onclick="switchTab('monthly')">Monthly Schedule</button>
+                <button class="tab-button" onclick="switchTab('annual')">Annual Summary</button>
+                <button class="tab-button" onclick="switchTab('comparison')">Comparison</button>
+            </div>
+
+            <div class="tab-content">
+                <!-- Overview Tab -->
+                <div id="overview" class="tab-pane active">
+                    <h3>Loan Balance Over Time</h3>
+                    <div class="chart-container">
+                        <canvas id="balanceChart"></canvas>
+                    </div>
+                    <h3>Cumulative Interest Paid</h3>
+                    <div class="chart-container">
+                        <canvas id="interestChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- EMI Breakdown Tab -->
+                <div id="emibreakdown" class="tab-pane">
+                    <h3>Principal vs Interest per EMI</h3>
+                    <div class="chart-container">
+                        <canvas id="emiBreakdownChart"></canvas>
+                    </div>
+                    <p style="margin-top: 20px; color: #666; text-align: center;">
+                        This chart shows how each EMI payment is split between principal and interest over time.
+                        Notice how the interest component decreases while the principal component increases.
+                    </p>
+                </div>
+
+                <!-- Monthly Tab -->
+                <div id="monthly" class="tab-pane">
+                    <div id="monthlyTable"></div>
+                    <div id="monthlyPagination" class="pagination"></div>
+                </div>
+
+                <!-- Annual Tab -->
+                <div id="annual" class="tab-pane">
+                    <div class="chart-container">
+                        <canvas id="annualChart"></canvas>
+                    </div>
+                    <div id="annualTable"></div>
+                </div>
+
+                <!-- Comparison Tab -->
+                <div id="comparison" class="tab-pane">
+                    <div id="comparisonStats" class="stat-grid"></div>
+                    <div id="comparisonTable"></div>
+                </div>
+            </div>
+        </div>
+
+	<!-- Footer with Attribution -->
+        <footer>
+            <p>Developed by <strong>Suchitan Vajpayee</strong></p>
+            <div class="footer-links">
+                <a href="https://github.com/SuchitanVajpayee" target="_blank">GitHub Profile</a>
+                <span style="color: rgba(255,255,255,0.5);">|</span>
+                <a href="https://github.com/SuchitanVajpayee/emi-tesseract" target="_blank">View Source Code</a>
+                <span style="color: rgba(255,255,255,0.5);">|</span>
+                <a href="https://www.linkedin.com/in/suchitan-vajpayee-8bba542a3" target="_blank">LinkedIn</a>
+            </div>
+            <p class="footer-copyright">© 2026 EMI Tesseract. All rights reserved.</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
