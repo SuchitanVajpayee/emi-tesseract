@@ -305,11 +305,21 @@ function calculateEMI() {
     const tenureValue = parseFloat(document.getElementById('tenureValue').value) || 0;
     const tenureUnit = document.getElementById('tenureUnit').value;
     
+    
     if (loanAmount < 1000) {
-        alert('⚠️ Minimum loan amount should be ₹1,000');
-        document.getElementById('loanAmount').value = 1000;
+        const loanAmountInput = document.getElementById("loanAmount");
+        const loanAmountError = document.getElementById("loanAmountError");
+        if (loanAmountError) loanAmountError.classList.add("show");
+        if (loanAmountInput) loanAmountInput.classList.add("input-error");
+        document.getElementById("baseSummary").innerHTML = "<div class=\"loading\">⚠️ Please enter a valid loan amount (minimum ₹1,000)</div>";
+        document.getElementById("prepaymentSummary").innerHTML = "<div class=\"loading\">⚠️ Please enter a valid loan amount (minimum ₹1,000)</div>";
         return;
     }
+    
+    const loanAmountInput = document.getElementById("loanAmount");
+    const loanAmountError = document.getElementById("loanAmountError");
+    if (loanAmountError) loanAmountError.classList.remove("show");
+    if (loanAmountInput) loanAmountInput.classList.remove("input-error");
 
     if (loanAmount > 100000000) {
         alert('⚠️ Maximum loan amount should be ₹10 Crores (₹10,00,00,000)');
